@@ -21,30 +21,57 @@ async function fetchMovieDataAndReview(searchQuery) {
                 if (nytData.response && nytData.response.docs.length > 0) {
                     console.log(nytData.response.docs[0].headline.main);
                     console.log("Läs mer:" + nytData.response.docs[0].web_url);
-                    //h3: text: nytData.response.docs[0].abstract
-                    //Inledande text: nytData.response.docs[0].lead_paragraph
-                    //Av: nytData.response.docs[0].byline.original.replace("By ", "");
+
+                    return {
+                        movieTitle: tmdbData.results[0].title,
+                        reviewHeadline: nytData.response.docs[0].headline.main,
+                        reviewUrl: nytData.response.docs[0].web_url,
+                        reviewAbstract: nytData.response.docs[0].abstract,
+                        reviewLeadParagraph: nytData.response.docs[0].lead_paragraph,
+                        reviewer: nytData.response.docs[0].byline.original.replace("By ", "")
+                    };
                 } else {
                     console.log("Inga NY Times recensioner hittades för denna film.");
+                    return null;
                 }
             } else {
                 console.log("Inga NY Times recensioner hittades för denna film.");
+                return null;
             }
         } else {
             console.log("Inga filmer hittades med den angivna söktermen.");
+            return null;
         }
     } catch (error) {
         console.error(error);
+        return null;
+    }
+    
+}
+
+function updateDOMWithMovieData(movieData) {
+    const moviesEl = document.getElementById('movies');
+    if (movieData) {
+        moviesEl.innerHTML = `
+        <div class=movie>
+            <p>${movieData.movieTitle}</p>
+            <p>${movieData.reviewHeadline}</p>
+            <p>${movieData.reviewLeadParagraph}</p>
+            <p>Av: ${movieData.reviewer}</p>
+            <p>Läs hela recesionen på ${movieData.reviewUrl}</p>
+        </div>
+        `;
+    } else {
+        moviesEl.innerHTML = "<p>Ingen filmdata hittades.</p>";
     }
 }
 
 
-
-document.getElementById('search-form').addEventListener('submit', function(event) {
+document.getElementById('search-form').addEventListener('submit', async function(event) {
     event.preventDefault();
     const searchQuery = document.getElementById('search-box').value;
-    //fetchMovieData(searchQuery);
-    fetchMovieDataAndReview(searchQuery);
+    const data = await fetchMovieDataAndReview(searchQuery);
+    updateDOMWithMovieData(data);
 })
 
 
