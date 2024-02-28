@@ -1,2 +1,89 @@
 //Variabler, mixins osv
 //Färgkoder i variabler, styling på texter, textstorlekar osv.
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+header {
+    h1 {
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: 500;
+        margin-top: 50px;
+        font-size: 32px;
+        display: inline-block;
+
+        @media(max-width:670px) {
+            font-size: 24px;
+        }
+
+        @media(max-width:500px) {
+            font-size: 18px;
+        }
+
+        @media(max-width:400px) {
+            font-size: 16px;
+        }
+
+        @media(max-width:350px) {
+            font-size: 12px;
+        }
+    }
+}
+
+@keyframes moveToTop {
+    from {
+      margin-top: 300px;
+    }
+    to {
+      margin-top: 50px;
+    }
+}
+
+.form-moved {
+    animation: moveToTop 1s forwards;
+}
+
+.body-bg {
+    background: #1A1A1A;
+}
+
+.green-color {
+    color: #0F9D58;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+  
+.blink-cursor {
+    display: inline-block;
+    width: 2px; 
+    height: 28px;
+    background-color: #000;
+    margin-left: 5px;
+    animation: blink 0.7s infinite;
+    position: relative;
+    top: 3px;
+
+    @media(max-width:670px) {
+        height: 24px;
+    }
+
+    @media(max-width:500px) {
+        height: 18px;
+    }
+
+    @media(max-width:400px) {
+        height: 16px;
+    }
+
+    @media(max-width:350px) {
+        height: 12px;
+    }
+}
+
+.green-cursor {
+    background-color: #0F9D58;
+}

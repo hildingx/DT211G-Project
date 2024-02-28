@@ -4,10 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projekt</title>
-    <script src="js/main.js" type="module"></script>
+    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/info.js"></script>
     <link rel="stylesheet" href="css/main.scss">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
 </head>
 <body>
+    <header>
+        <a href="index.html">
+            <h1>:\>Search\movie\and_find\Review<span class="blink-cursor"></span></h1>
+        </a>
+        <button id="info-trigger" aria-expanded="false" aria-controls="info-content">?</button>
+        <section id="info-content" style="display: none;">
+            <p>Sök efter en film, exempelvis <em>Titanic</em> för att hitta en filmrecension från New York Times.</p>
+            <p>Specificera gärna med årtal, exempelvis <em>The Jungle Book 2016</em>.</p>
+            <p>Sökningen måste göras med den engelska titeln.</p>
+        </section>
+    </header>
     <main>
         <form id="search-form">
             <input id="search-box" type="text" placeholder="Sök efter en film...">
@@ -16,6 +31,26 @@
         <div id="movies">
 
         </div>
+        <div id="favorites">
+            <h2>Devs top three picks you must see</h2>
+            <div class="picks">
+                <div class="movie-pick">
+                    <img src="https://image.tmdb.org/t/p/w500//uq2u8HgtLFJkjNq2kHb2jvipIPT.jpg">
+                    <p class="movie-title">Magnolia</p>
+                </div>
+                <div class="movie-pick">
+                    <img src="https://image.tmdb.org/t/p/w500//jtrhTYB7xSrJxR1vusu99nvnZ1g.jpg">
+                    <p class="movie-title">The Gentlemen</p>
+                </div>
+                <div class="movie-pick">
+                    <img src="https://image.tmdb.org/t/p/w500//kdPMUMJzyYAc4roD52qavX0nLIC.jpg">
+                    <p class="movie-title">Talk to me</p>
+                </div>
+            </div>
+        </div>
     </main>
+    <footer>
+        Alexander Hilding
+    </footer>
 </body>
 </html>
