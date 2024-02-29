@@ -1,6 +1,19 @@
 //Variabler, mixins osv
 //Färgkoder i variabler, styling på texter, textstorlekar osv.
 
+
+$black: #000;
+$white: #fff;
+$near-white: #fdfdfd;
+$light-grey: #f8f9fa;
+$bg-color: #1A1A1A;
+$white-opac01: rgba($white, 0.1);
+$black-opac02: rgba($black, 0.2);
+$hacker-green: #0d864c;
+$hacker-green-opac02: rgba($hacker-green, 0.3);
+$grey: #ccc;
+
+
 body {
     font-family: 'Roboto', sans-serif;
 }
@@ -9,9 +22,7 @@ header {
     h1 {
         font-family: 'Courier New', Courier, monospace;
         font-weight: 500;
-        margin-top: 50px;
         font-size: 32px;
-        display: inline-block;
 
         @media(max-width:670px) {
             font-size: 24px;
@@ -31,59 +42,20 @@ header {
     }
 }
 
-@keyframes moveToTop {
-    from {
-      margin-top: 300px;
-    }
-    to {
-      margin-top: 50px;
-    }
-}
-
-.form-moved {
-    animation: moveToTop 1s forwards;
-}
-
+//Förändringar vid sumbit sökning
 .body-bg {
-    background: #1A1A1A;
+    background: $bg-color;
 }
 
-.green-color {
-    color: #0F9D58;
-}
-
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-  
-.blink-cursor {
-    display: inline-block;
-    width: 2px; 
-    height: 28px;
-    background-color: #000;
-    margin-left: 5px;
-    animation: blink 0.7s infinite;
-    position: relative;
-    top: 3px;
-
-    @media(max-width:670px) {
-        height: 24px;
-    }
-
-    @media(max-width:500px) {
-        height: 18px;
-    }
-
-    @media(max-width:400px) {
-        height: 16px;
-    }
-
-    @media(max-width:350px) {
-        height: 12px;
-    }
-}
-
+.green-color,
 .green-cursor {
-    background-color: #0F9D58;
+    color: $hacker-green;
 }
+
+.info-trigger-white,
+.footer-color {
+    color: $white;
+}
+
+
+

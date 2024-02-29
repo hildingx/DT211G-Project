@@ -11,26 +11,20 @@ html, body {
 body {
     display: flex;
     flex-direction: column;
-    background: #f8f9fa;
+    background: base.$light-grey;
     transition: 1s;
-}
-
-.movies-styles {
-    display: flex;
-    background-color: #f8f9fa;
-    border: 1px solid #000;
-    padding: 20px;
-    width: clamp(100px, 80%, 800px);
-    margin: 0 auto;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
 }
 
 header {
     text-align: center;
     a {
-        color: inherit;
+        color: base.$black;
         text-decoration: none;
+    }
+
+    h1 {
+        display: inline-block;
+        margin-top: 50px;
     }
 }
 
@@ -42,38 +36,12 @@ main {
 }
 
 footer {
-    padding: 20px 0;
+    padding: 40px 0;
+    margin-top: 75px;
     text-align: center;
 }
 
-#search-form {
-    display: flex;
-    position: relative;
-    margin-top: 200px;
-    margin-bottom: 100px;
-    width: 80%;
-    justify-content: center;
-}
-
-#search-box {
-    @include component.search-box();
-}
-
-#search-btn {
-    @include component.search-btn();
-    margin-left: 5px;
-}
-
-#search-btn:hover {
-    background-color: #0d864c;
-}
-
-#search-box:focus, #search-btn:focus {
-    border-color: #66afe9;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-}
-
-//Hjälp
+//Frågetecken info
 #info-trigger {
     position: absolute;
     top: 10px;
@@ -85,23 +53,33 @@ footer {
     border: none;
 }
 
-.info-trigger-white {
-    color: white;
-}
-
+//Info-ruta vid klick på frågetecken mha js
 #info-content {
     position: absolute;
-    right: 20px;
-    top: 40px; 
-    background: #f9f9f9;
-    border: 1px solid #ccc;
+    right: 30px;
+    top: 50px; 
+    background: base.$near-white;
+    border: 1px solid base.$grey;
     border-radius: 5px;
     padding: 10px;
     width: clamp(100px, 80%, 300px);
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px base.$black-opac02;
     z-index: 1;
 }
 
+//Styles för ruta med sökresultat / filminfo
+.movies-styles {
+    display: flex;
+    background-color: base.$light-grey;
+    border: 1px solid base.$black;
+    padding: 20px;
+    width: clamp(100px, 80%, 800px);
+    margin: 0 auto;
+    border-radius: 10px;
+    box-shadow: 0 0 15px base.$white-opac01;
+}
+
+//Styles för data hämtad från TMDB
 .tmdb {
     display: flex;
     justify-content: space-around;
@@ -112,37 +90,9 @@ footer {
         align-items: center;
     }
 
-    .tmdb-info {
-        margin-left: 20px;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-
-        img {
-            max-width: 100px;
-            position: absolute;
-            right: 0;
-            bottom: 0;
-            transition: transform 0.3s ease;
-        }
-
-        img:hover {
-            transform: scale(1.1);
-        }
-
-        p:last-of-type {
-            position: absolute;
-            right: 0;
-            bottom: 30px;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-
-        @media(max-width:750px) {
-            p:first-of-type {
-                padding-bottom: 50px;
-            }
-        }
+    .movie-poster {
+        width: clamp(100px, 80%, 300px);
+        border: 1px solid black;
     }
 
     h2 {
@@ -153,33 +103,20 @@ footer {
     p {
         font-size: 18px;
     }
-
-    .movie-poster {
-        width: clamp(100px, 80%, 300px);
-        border: 1px solid black;
-    }
 }
 
+//Styles för data hämtad från Ny Times
 .nyt {
     display: flex;
     flex-direction: column;
     margin-top: 40px;
 
-    img {
-        max-width: 200px;
-        transition: transform 0.3s ease;
-    }
-
-    img:hover {
-        transform: scale(1.1);
-    }
-
     blockquote {
         font-style: italic;
         margin: 20px 0 0 0;
         padding: 20px;
-        background-color: #f9f9f9;
-        border-left: 5px solid #ccc;
+        background-color: inherit;
+        border-left: 4px solid base.$grey;
         quotes: "“ " " ”";
     }
 
@@ -217,17 +154,20 @@ footer {
     }
 }
 
+//Styles om ingen review hittas
 .no-review {
     font-size: 18px;
     text-align: center;
     margin-top: 100px;
 }
 
+//Styles om ingen film hittas
 .no-data {
     margin: 20px auto;
     font-size: 18px;
 }
 
+//Styles startsida filmtips
 #favorites {
     display: flex;
     flex-direction: column;
@@ -257,23 +197,15 @@ footer {
         flex-direction: column;
         align-items: center;
         cursor: pointer;
-        transition: transform 0.3s ease;
 
         @media(max-width:600px) {
             margin-bottom: 40px;
         }
     }
 
-    .movie-pick:hover {
-        transform: scale(1.05);
-    }
-
     img {
-        max-width: 300;
+        max-width: 300px;
         width: 80%;
-        border: 1px solid black;
-        
+        border: 1px solid base.$black;
     }
-
-    
 }

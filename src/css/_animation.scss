@@ -1,0 +1,65 @@
+//Animationer
+
+@use 'base';
+
+//Flytta sökruta uppåt
+@keyframes moveToTop {
+    from {
+      margin-top: 300px;
+    }
+    to {
+      margin-top: 50px;
+    }
+}
+
+//Flytta sökruta uppåt, läggs till med js
+.form-moved {
+    animation: moveToTop 1s forwards;
+}
+
+//Blinkande markör i header
+@keyframes blink {
+    0%, 100% { 
+        opacity: 1; 
+    }
+    50% { 
+        opacity: 0; 
+    }
+}
+ 
+//Blinkande markör i header
+.blink-cursor {
+    display: inline-block;
+    width: 2px; 
+    height: 28px;
+    background-color: base.$black;
+    margin-left: 5px;
+    animation: blink 0.7s infinite;
+    position: relative;
+    top: 3px;
+
+    @media(max-width:670px) {
+        height: 24px;
+    }
+
+    @media(max-width:500px) {
+        height: 18px;
+    }
+
+    @media(max-width:400px) {
+        height: 16px;
+    }
+
+    @media(max-width:350px) {
+        height: 12px;
+    }
+}
+
+//Filmtips hover scale
+.movie-pick {
+    transition: transform 0.3s ease;
+}
+
+.movie-pick:hover {
+    transform: scale(1.05);
+}

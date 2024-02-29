@@ -1,22 +1,89 @@
 //Komponenter - knappar, länkar, formulär, modaler osv.
 
-@mixin search-box() {
+@use 'base';
+
+#search-form {
+    display: flex;
+    position: relative;
+    margin-top: 200px;
+    margin-bottom: 100px;
+    width: 80%;
+    justify-content: center;
+}
+
+#search-box {
     padding: 10px;
     font-size: 16px;
-    border: 1px solid #ccc;
+    border: 1px solid base.$grey;
     border-radius: 5px;
     outline: none;
     width: 80%;
     max-width: 300px;
+    margin-right: 5px;
 }
 
-@mixin search-btn() {
+#search-btn {
     padding: 10px 20px;
     font-size: 16px;
-    background-color: #0F9D58;
-    color: white;
+    background-color: base.$hacker-green;
+    color: base.$white;
     border: none;
     cursor: pointer;
     border-radius: 5px;
     outline: none;
+}
+
+#search-btn:hover {
+    background-color: base.$hacker-green;
+}
+
+#search-box:focus, #search-btn:focus {
+    border-color: base.$hacker-green;
+    box-shadow: 0 0 0 2px base.$hacker-green-opac02;
+}
+
+//Styles för TMDB-logo
+.tmdb-info {
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    img {
+        max-width: 100px;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        transition: transform 0.3s ease;
+    }
+
+    img:hover {
+        transform: scale(1.1);
+    }
+
+    p:last-of-type {
+        position: absolute;
+        right: 0;
+        bottom: 30px;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+
+    @media(max-width:750px) {
+        p:first-of-type {
+            padding-bottom: 50px;
+        }
+    }
+}
+
+//Styles för NYT-logo
+.nyt {
+    img {
+        max-width: 200px;
+        transition: transform 0.3s ease;
+    }
+
+    img:hover {
+        transform: scale(1.1);
+    }
 }

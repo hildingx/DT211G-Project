@@ -3,91 +3,69 @@ require('dotenv').config();
 const nytApiKey = process.env.NYT_API_KEY;
 const tmdbApiKey = process.env.TMDB_API_KEY;
 
-const mockData = {
-    results: [
-        {
-          "movieTitle": "Terminator 2",
-          "releaseDate": "1991-07-03",
-          "moviePoster": "/5M0j0B18abtBI5gi2RhfjjurTqb.jpg",
-          "reviewHeadline": "Review/Film; In New 'Terminator,' The Forces of Good Seek Peace, Violently",
-          "reviewUrl": "https://www.nytimes.com/1991/07/03/movies/review-film-in-new-terminator-the-forces-of-good-seek-peace-violently.html",
-          "reviewAbstract": "Now he's the good guy. Fast, exciting special-effects epic.",
-          "reviewLeadParagraph": "Using his imagination and not much more, James Cameron devised \"The Terminator,\" the lean, mean 1984 action film that became a classic of apocalypse-minded science fiction. What this meant, in keeping with inexorable Hollywood logic, was that Mr. Cameron would become a prime candidate for sequel sickness. He would be able to follow up his original shoestring hit with a second installment whose budget is reportedly somewhere near the $100 million mark. That figure suggests at the very least a typographical error, not to mention mistakes of a more serious kind.",
-          "reviewer": "By Janet Maslin"
-        },
-    ],
-};
-
-let useMock = false;
-
+//Hämta data från TMDB-API och Nytimes-API baserat på söksträng
 async function fetchMovieDataAndReview(searchQuery) {
-    if (useMock) {
-        return mockData.results[0];
-    } else {
-            try {
-                const tmdbResponse = await fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(searchQuery)}&api_key=${tmdbApiKey}`);
-                const tmdbData = await tmdbResponse.json();
+    try { 
+        const tmdbResponse = await fetch(`https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(searchQuery)}&api_key=${tmdbApiKey}`); //EncodeURIComponent gör söksträng "URL-vänlig"
+        const tmdbData = await tmdbResponse.json();
 
-                if (tmdbData.results.length > 0) {
-                    console.log(tmdbData.results[0].title);
+        //Skapa objekt med hämtade egenskaper från fetchad data
+        if (tmdbData.results.length > 0) {
+            const movieData = {
+                movieTitle: tmdbData.results[0].title,
+                releaseDate: tmdbData.results[0].release_date,
+                moviePoster: tmdbData.results[0].poster_path,
+                movieOverview: tmdbData.results[0].overview,
+            };
+            
+            //Hämta film-ID för att kunna hämta data med mer utökade egenskaper från ett annat TMDB-api
+            const movieId = tmdbData.results[0].id;
+            
+            const tmdbDataExtendedResponse = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${tmdbApiKey}&language=en-US&append_to_response=credits`);
+            const tmdbDataExtended = await tmdbDataExtendedResponse.json();
 
-                    const movieData = {
-                        movieTitle: tmdbData.results[0].title,
-                        releaseDate: tmdbData.results[0].release_date,
-                        moviePoster: tmdbData.results[0].poster_path,
-                        movieOverview: tmdbData.results[0].overview,
-                    };
-                    
-                    const movieId = tmdbData.results[0].id;
-                    console.log("movie id " + movieId);
+            //Konvertera egenskapen runtime från minuter till h m
+            let runTimeMinutes = tmdbDataExtended.runtime;
+            let hours = Math.floor(runTimeMinutes / 60);
+            let minutes = runTimeMinutes % 60;
 
-                    
-                    const tmdbDataExtendedResponse = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${tmdbApiKey}&language=en-US&append_to_response=credits`);
-                    const tmdbDataExtended = await tmdbDataExtendedResponse.json();
+            movieData.runTime = `${hours}h ${minutes}m`;                
 
-                    let runTimeMinutes = tmdbDataExtended.runtime;
-                    let hours = Math.floor(runTimeMinutes / 60);
-                    let minutes = runTimeMinutes % 60;
+            //Hitta namn på regisör
+            const director = tmdbDataExtended.credits.crew.find(person => person.job === "Director");
+            const directorName = director.name;
 
-                    movieData.runTime = `${hours}h ${minutes}m`;                
+            //Plocka ut release-år från releasedatum
+            const releaseYear = movieData.releaseDate.split('-')[0];
 
-                    const director = tmdbDataExtended.credits.crew.find(person => person.job === "Director");
-                    const directorName = director.name;
-                    console.log("director " + directorName);
+            //Hämta data från Nytimes API med söksträng + regissör + årtal
+            if (releaseYear) {
+                const nytResponse = await fetch(`https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${encodeURIComponent(searchQuery + " " + directorName)}&fq=section_name:"Movies"%20AND%20type_of_material:"Review"%20AND%20pub_year:"${releaseYear}"&api-key=${nytApiKey}`);
+                const nytData = await nytResponse.json();
 
-                    const releaseYear = movieData.releaseDate.split('-')[0];
-
-                    if (releaseYear) {
-                        const nytResponse = await fetch(`https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${encodeURIComponent(searchQuery + " " + directorName)}&fq=section_name:"Movies"%20AND%20type_of_material:"Review"%20AND%20pub_year:"${releaseYear}"&api-key=${nytApiKey}`);
-                        const nytData = await nytResponse.json();
-
-                        if (nytData.response && nytData.response.docs.length > 0) {
-                            movieData.reviewUrl = nytData.response.docs[0].web_url;
-                            movieData.reviewAbstract = nytData.response.docs[0].abstract;
-                            movieData.headlineMain = nytData.response.docs[0].headline.main;
-                            movieData.reviewLeadParagraph = nytData.response.docs[0].lead_paragraph;
-                            movieData.reviewer = nytData.response.docs[0].byline.original.replace("By ", "");
-                        } else {
-                            console.log("Inga NY Times recensioner hittades för denna film.");
-                        }
-                    } else {
-                        console.log("Inga NY Times recensioner hittades för denna film.");
-                    }
-
-                    return movieData;
-                } else {
-                    console.log("Inga filmer hittades med den angivna söktermen.");
-                    return null;
+                //Om svar erhålles lägg in ytterligare egenskaper i objektet movieData.
+                if (nytData.response && nytData.response.docs.length > 0) {
+                    movieData.reviewUrl = nytData.response.docs[0].web_url;
+                    movieData.reviewAbstract = nytData.response.docs[0].abstract;
+                    movieData.headlineMain = nytData.response.docs[0].headline.main;
+                    movieData.reviewLeadParagraph = nytData.response.docs[0].lead_paragraph;
+                    movieData.reviewer = nytData.response.docs[0].byline.original.replace("By ", "");
                 }
-            } catch (error) {
-                console.error(error);
-                return null;
             }
+            return movieData;
+        } else {
+            return null;
+        }
+    } catch (error) {
+        console.error(error);
+        return null;
     }
 }
 
+//Funktion tar emot obj movieData och skriver ut i HTML
 function updateDOMWithMovieData(movieData) {
     const moviesEl = document.getElementById('movies');
+    //Skriver ut data hämtad från TMDB
     if (movieData) {
         let movieHtml = `
         <div class="movie">
@@ -105,9 +83,11 @@ function updateDOMWithMovieData(movieData) {
             </div>
         `;
 
+        //Om abstract innehåller mer än 20 ord väljs headline istället. (Detta för att egenskaperna i Nytimes API skiljer sig lite från film till film. Ibland är abstract att föredra som titel, ibland är headline att föredra)
         const wordCount = movieData.reviewAbstract ? movieData.reviewAbstract.split(' ').length : 0;
         const reviewText = wordCount > 20 ? movieData.headlineMain : movieData.reviewAbstract;
 
+        //Skriver ut data hämtad från NyTimes
         if (movieData.reviewAbstract) {
             movieHtml += `
                 <div class="nyt">
@@ -116,7 +96,7 @@ function updateDOMWithMovieData(movieData) {
                         <p>${movieData.reviewLeadParagraph}</p>
                         <cite>- ${movieData.reviewer}</cite>
                     </blockquote>
-                    <p>Läs hela recensionen på <a href="${movieData.reviewUrl}">New York Times.</a></p>
+                    <p>Läs hela recensionen på <a href="${movieData.reviewUrl}" target=”_blank”>New York Times.</a></p>
                     <a href="https://developer.nytimes.com/">
                         <img src="https://developer.nytimes.com/files/poweredby_nytimes_200c.png?v=1583354208354" alt="Data provided by New York Times-logo">
                     </a>
@@ -133,35 +113,41 @@ function updateDOMWithMovieData(movieData) {
     }
 }
 
-
-document.getElementById('search-form').addEventListener('submit', async function(event) {
-    event.preventDefault();
-    this.classList.add('form-moved');
+//Applicera klasser med stilar vid visning av film + recension. 
+function applyStyles() {
+    document.getElementById('search-form').classList.add('form-moved');
     document.body.classList.add('body-bg');
     document.querySelector('h1').classList.add('green-color');
     document.querySelector('.blink-cursor').classList.add('green-cursor');
     document.querySelector('#info-trigger').classList.add('info-trigger-white');
+    document.querySelector('footer').classList.add('footer-color');
     document.getElementById('movies').classList.add('movies-styles');
     document.getElementById('favorites').style.display = 'none';
-    const searchInput = document.getElementById('search-box');
+}
+
+//Händelselyssnare vid submit av formulär
+document.getElementById('search-form').addEventListener('submit', async function(event) {
+    //Hindrar sidan från att laddas om
+    event.preventDefault();
+    applyStyles();
+    //Hämtar sökvärdet
     const searchQuery = document.getElementById('search-box').value;
-    searchInput.placeholder = "Sök efter en ny film...";
+    //Rensar sökrutan
+    const searchInput = document.getElementById('search-box');
+    searchInput.value = '';
+    searchInput.placeholder = "Sök efter annan film...";
+    //Använder sökvärdet i funktionen som hämtar och returnerar data från tmdb och nytimes api.
     const data = await fetchMovieDataAndReview(searchQuery);
+    //Kör funktion som tar emot data (movieData objekt i det här fallet) och skriver ut i HTML
     updateDOMWithMovieData(data);
-})
+});
 
-
+//Händelselyssnare vid klick på movie-pick (devs top tre)
 document.querySelectorAll('.movie-pick').forEach(pick => {
     pick.addEventListener('click', function() {
         const movieTitle = this.querySelector('.movie-title').textContent;
         fetchMovieDataAndReview(movieTitle).then(data => {
-            document.getElementById('search-form').classList.add('form-moved');
-            document.body.classList.add('body-bg');
-            document.querySelector('h1').classList.add('green-color');
-            document.querySelector('.blink-cursor').classList.add('green-cursor');
-            document.querySelector('#info-trigger').classList.add('info-trigger-white');
-            document.getElementById('movies').classList.add('movies-styles');
-            document.getElementById('favorites').style.display = 'none';
+            applyStyles();
             updateDOMWithMovieData(data);
         });
     });
