@@ -47,9 +47,12 @@ header {
     background: $bg-color;
 }
 
-.green-color,
-.green-cursor {
+.green-color {
     color: $hacker-green;
+}
+
+.green-cursor {
+    background-color: $hacker-green !important;
 }
 
 .info-trigger-white,
