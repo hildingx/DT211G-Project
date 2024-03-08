@@ -1,5 +1,11 @@
+/* Tidigare kod innan publicering via netlify för att hantera API-nycklar lokalt
 //Initiera dotenv för att ladda miljövariabler från .env-filen
 require('dotenv').config();
+const nytApiKey = process.env.NYT_API_KEY;
+const tmdbApiKey = process.env.TMDB_API_KEY;
+*/
+
+//Hämta miljövariabler för API-nycklar från Netlify-miljön
 const nytApiKey = process.env.NYT_API_KEY;
 const tmdbApiKey = process.env.TMDB_API_KEY;
 
