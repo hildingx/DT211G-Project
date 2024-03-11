@@ -82,7 +82,7 @@ footer {
 //Styles för data hämtad från TMDB
 .tmdb {
     display: flex;
-    justify-content: space-around;
+    width: 100%;
 
     @media (max-width:750px) {
         flex-direction: column;
@@ -91,7 +91,9 @@ footer {
     }
 
     .movie-poster {
-        width: clamp(100px, 80%, 300px);
+        width: 80%;
+        max-width: 300px;
+        max-height: 474px;
         border: 1px solid black;
     }
 
