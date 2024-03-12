@@ -52,8 +52,12 @@ async function fetchMovieDataAndReview(searchQuery) {
                 //Om svar erhålles lägg in ytterligare egenskaper i objektet movieData.
                 if (nytData.response && nytData.response.docs.length > 0) {
                     movieData.reviewUrl = nytData.response.docs[0].web_url;
-                    movieData.reviewAbstract = nytData.response.docs[0].abstract;
-                    movieData.headlineMain = nytData.response.docs[0].headline.main;
+                    //Hämta recensionsrubrik, dela upp i två delar före och efter ; om ; finns. Använd texter efter ;. 
+                    if (nytData.response.docs[0].headline.print_headline.includes(';')) {
+                        movieData.headline = nytData.response.docs[0].headline.print_headline.split(';')[1].trim();
+                    } else {
+                        movieData.headline = nytData.response.docs[0].headline.print_headline;
+                    }
                     movieData.reviewLeadParagraph = nytData.response.docs[0].lead_paragraph;
                     movieData.reviewer = nytData.response.docs[0].byline.original.replace("By ", "");
                 }
@@ -89,16 +93,12 @@ function updateDOMWithMovieData(movieData) {
             </div>
         `;
 
-        //Om abstract innehåller mer än 20 ord väljs headline istället. (Detta för att egenskaperna i Nytimes API skiljer sig lite från film till film. Ibland är abstract att föredra som titel, ibland är headline att föredra)
-        const wordCount = movieData.reviewAbstract ? movieData.reviewAbstract.split(' ').length : 0;
-        const reviewText = wordCount > 20 ? movieData.headlineMain : movieData.reviewAbstract;
-
         //Skriver ut data hämtad från NyTimes
-        if (movieData.reviewAbstract) {
+        if (movieData.headline) {
             movieHtml += `
                 <div class="nyt">
                     <blockquote>
-                        <h2>${reviewText}</h2>
+                        <h2>${movieData.headline}</h2>
                         <p>${movieData.reviewLeadParagraph}</p>
                         <cite>- ${movieData.reviewer}</cite>
                     </blockquote>
